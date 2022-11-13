@@ -1,0 +1,27 @@
+Package: orthoVisualizer
+Type: Package
+Title: Run through DNA Sequences and Identify/Annotate Subsequence Ortholog
+    of Interest
+Version: 0.1.0
+Author: Karyn Komatsu
+Maintainer: Karyn Komatsu <karyn.komatsu@mail.utoronto.ca>
+Description: Look for orthologue subsequence in multi-FASTA file of DNA, 
+    where subsequence (for specific motif/gene) is inputted by user.
+    Annotate sequence with orthologue subsequence.
+    Visualize abundance of such orthologous gene/motif (ex. barplot). 
+License: MIT + file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 4.1.1)
+Imports: 
+    ggplot2 (>= 3.2.0),
+    tidyverse
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.2.2
+Suggests: 
+    testthat,
+    knitr,
+    rmarkdown,
+VignetteBuilder: knitr
+URL: https://github.com/karynkomatsu/orthoVisualizer
+BugReports: https://github.com/karynkomatsu/orthoVisualizer/issues
