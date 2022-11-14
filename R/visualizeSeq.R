@@ -3,21 +3,17 @@
 
 
 # Create helper functions=====================
-
+#' @importFrom BiocManager install
+#' @importFrom BiocGenerics paste
 loadFASTA <- function(fastaPath){
   # Input: pathway of FASTA file
 
   # Read and validate FASTA. Then create and return a tibble with columns:
   #    Header: Header of the FASTA file
   #    Sequence: Entire sequence in the FASTA
-  #    Upstream Sequence: First (n-k) nucleotides of the FASTA file
-  #    Coding Sequence: Last k/3 codons (k nucleotides) of the FASTA file
 
   # Read FASTA file from its path
-  fastaFile <- readLines(fastaPath)
-
-  # TODO Delete this line later
-  #fastaFile <- readLines("Data/assembly.fasta")#[1:8606]
+  fastaFile <- base::readLines(fastaPath)
 
   # Get location header appears
   lineheads <- grep("^[>]", fastaFile)
@@ -46,20 +42,11 @@ loadFASTA <- function(fastaPath){
   }  # End of for loop of i
 
   # Create tibble
-  # head = header; seq = corresponding sequence; start = line that seq started; end = line that seq ended
+  # head = header; seq = corresponding sequence;
+  # start = line that seq started; end = line that seq ended
   fastaDF <- tibble::tibble(head = fastahead, seq = ithSeq, start=start, end=end)
 
-  # Separate the sequence into "upstream" and "coding" sequences
-  # ie. We add 2 more columns to tibble of fasta returned by readFASTA()
-  fastaDF$upstream <- fastaDF$seq #substring(fastaDF$seq, 1, 500)
-  fastaDF$coding <- substring(fastaDF$seq, length(fastaDF$seq) - 30, length(fastaDF$seq)) #substring(fastaDF$seq, 501, 530)
-
-  # Check if sequence splitted
-  #if (paste(fastaDF$upstream, fastaDF$coding, sep="")!= paste(fastaDF$seq)) {
-  #  print("ERROR: FAILED to split the sequence into upstream and coding...")
-  #}
-
-  # Return the edited dataframe with 2 extra columns
+  # Return the dataframe
   return(fastaDF)
 }
 
@@ -86,47 +73,11 @@ findMotifs <- function(upstream, patt = "CGCG") {
   return(motifsIndex)
 }
 
-
-getAA <- function(coding){
-  # Input string: Coding sequence (should be 10 codon for this Unit)
-  # Translate codons and return amino acid sequence with corresponding codons.
-
-  # Validate input: Is the input string divisible by 3? (ie NO incomplete codon)
-  if (nchar(coding) %% 3 != 0){
-    print("INVALID INPUT: Coding sequence string is non-splittable by 3.")
-    return(invisible(NULL))
-  }
-
-  # GENETIC CODE: Linking Codons to Amino Acids
-  code <- Biostrings::GENETIC_CODE
-
-  # Translate individual codons to AA using loop
-  start <- seq(1, nchar(coding), 3)   # starting indices of codons: 1, 4, 7,...
-  # Vector that will contain AA
-  AAseq <- c()
-
-  # Loop starts
-  for (i in 1:length(start)){
-    codon <- substring(coding, start[i], start[i] + 2)
-    AAseq[i] <- code[codon]    # Add translated AA
-    names(AAseq)[i] <- codon   # Add corresponding codon as name
-  }
-
-  return(AAseq)
-}
-
-
 printAnnotate <- function(header, upstream, pattern, motifIndex){
   # Inputs:
   #    header: Header of the FASTA file
-  #    upstream: Vector of strings representing upstream region.
-  #              Each item in vector is 50 nucleotide long string.
   #    motifIndex: Vector of motifs' starting indices associated with their
   #               motif substrings.
-  #    AAseq: Sequence of translated amino acids associated with their codons
-
-  # Format our annotation results as shown in the "Sample Annotation" section
-  # under Professor Steipe's Integrator Unit: Genome Annotation.
 
   # Print header at the very top
   cat(header, '\n')
@@ -198,6 +149,11 @@ printAnnotate <- function(header, upstream, pattern, motifIndex){
 # Function that combines all the helper functions================
 
 # For sequence annotation of specific subsequence pattern representing otholog gene/motif
+#' Annotate Ortholog (gene/motif) Occurrence
+#' @param fastaPath is the filepath for input FASTA file containing sequences
+#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @return invisible NULL
+#' @export
 annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
 
   # Input: Path to FASTA file, Pattern of the target orthologous motif / gene subsequence
@@ -229,7 +185,7 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
     }
 
     # Add all the lines of sequences
-    splitUpstream <- substring(fastaDF$upstream, start, stop)
+    splitSeq <- substring(fastaDF$seq, start, stop)
 
     # Iterate upstream and find any motifs that could be the inputted binding motifs
     # (ie. find all matches of the inputted subsequence)
@@ -237,105 +193,27 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
     motifIndex <- findMotifs(fastaDF$seq[i], pattern)
 
     # Print formatted genome sequence with corresponding annotations
-    printAnnotate(fastaDF$head[i], splitUpstream, pattern, motifIndex)
+    printAnnotate(fastaDF$head[i], splitSeq, pattern, motifIndex)
   }
   return(invisible(NULL))
 }
 
-
-# frequency of a sequence
-freqSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
-
-  # Input: Path to FASTA file,
-  #        Pattern of the target orthologous motif / gene subsequence
-
-  # Check if required packages installed
-  if (! requireNamespace("BiocManager", quietly = TRUE)) {
-    install.packages("BiocManager")
-  }
-  if (! requireNamespace("Biostrings", quietly = TRUE)) {
-    BiocManager::install("Biostrings")
-  }
-  if (! requireNamespace("ggplot2", quietly = TRUE)) {
-    install.packages("ggplot2")
-  }
-  if (! requireNamespace("magrittr", quietly = TRUE)) {
-    install.packages("magrittr")
-  }
-  if (! requireNamespace("dplyr", quietly = TRUE)) {
-    install.packages("dplyr")
-  }
-  if (! requireNamespace("tidyverse", quietly = TRUE)) {
-    install.packages("tidyverse")
-  }
-
-  loadNamespace("ggplot2")
-  loadNamespace("tidyverse")
-  loadNamespace("magrittr")
-  loadNamespace("dplyr")
-
-  # Read, validate, and load in the FASTA data from path
-  fastaDF <- loadFASTA(fastaPath)  # Dataframe for FASTA sequences
-
-  # Initialize counter for number of matching motifs per sequence
-  numMotif <- c()
-
-  for (i in 1:length(fastaDF$seq)){
-
-    # Iterate upstream and find any motifs that could be the
-    #inputted binding motifs
-    # (ie. find all matches of the inputted subsequence)
-    # Vectors of motifs & starting indices
-    motifIndex <- findMotifs(fastaDF$seq[i], pattern)
-    mi <- attr(motifIndex, "match.length")
-    numMotif[i] <- length(mi[which(mi != -1)])
-
-  }
-  # Create tibble
-  motifDF <- tibble::tibble(id = seq(1, length(fastaDF$head)),
-                            head = fastaDF$head,
-                            numMotif = numMotif)
-
-  # Title of plot
-  plotTitle <- paste("Frequency (Number of Occurrence) of pattern",
-                     pattern, "per Sequence")
-
-  plot <- motifDF %>%
-    ggplot2::ggplot(ggplot2::aes(x=id, y=numMotif))+
-    ggplot2::geom_col(position = "dodge", fill="dark blue") +
-    ggplot2::labs(title=plotTitle) +
-    ggplot2::ylab("Frequency (Number of Occurence)") +
-    ggplot2::xlab("i-th Sequence in input FASTA")
-
-  plot # Display the plot
-
-  return(plot) # Return the plot so it'll be savable outside function
-}
-
-# frequency RATIO of a sequence
-freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
+# Give tibble containing:
+# id, header, freq, length of sequence, freq ratio
+#' Count Ortholog (gene/motif) Occurrence
+#' @param fastaPath is the filepath for input FASTA file containing sequences
+#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @return tibble of "assigned id", "header", "number of matches",
+#' "ratio of matches"... of all sequences in FASTA file
+#' @export
+#' @import ggplot2
+#' @import magrittr
+#' @import dplyr
+#' @import tidyverse
+quantSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
 
   # Input: Path to FASTA file,
   #        Pattern of the target orthologous motif / gene subsequence
-
-  # Check if required packages installed
-  if (! requireNamespace("ggplot2", quietly = TRUE)) {
-    install.packages("ggplot2")
-  }
-  if (! requireNamespace("magrittr", quietly = TRUE)) {
-    install.packages("magrittr")
-  }
-  if (! requireNamespace("dplyr", quietly = TRUE)) {
-    install.packages("dplyr")
-  }
-  if (! requireNamespace("tidyverse", quietly = TRUE)) {
-    install.packages("tidyverse")
-  }
-
-  loadNamespace("ggplot2")
-  loadNamespace("tidyverse")
-  loadNamespace("magrittr")
-  loadNamespace("dplyr")
 
   # Read, validate, and load in the FASTA data from path
   fastaDF <- loadFASTA(fastaPath)  # Dataframe for FASTA sequences
@@ -374,9 +252,61 @@ freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGC
 
   # Create tibble
   motifDF <- tibble::tibble(id = id,
+                            head = fastaDF$head,
                             numMotif = numMotif,
                             lenSeq = lenSeq,
                             ratioMotif = ratioMotif)
+
+  return(motifDF) # Return the plot so it'll be savable outside function
+}
+
+# frequency of a sequence
+#' Plot Ortholog Subsequence (gene/motif) Occurrence
+#' @param fastaPath is the filepath for input FASTA file containing sequences
+#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @return barplot of Frequency for all sequences in FASTA file
+#' @export
+#' @import ggplot2
+freqSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
+
+  # Input: Path to FASTA file,
+  #        Pattern of the target orthologous motif / gene subsequence
+
+  # Get quantity info
+  motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
+
+  # Title of plot
+  plotTitle <- paste("Frequency (Number of Occurrence) of pattern",
+                     pattern, "per Sequence")
+
+  id <- numMotif <- NULL
+
+  plot <- motifDF %>%
+    ggplot2::ggplot(ggplot2::aes(x=id, y=numMotif))+
+    ggplot2::geom_col(position = "dodge", fill="dark blue") +
+    ggplot2::labs(title=plotTitle) +
+    ggplot2::ylab("Frequency (Number of Occurence)") +
+    ggplot2::xlab("i-th Sequence in input FASTA")
+
+  plot # Display the plot
+
+  return(plot) # Return the plot so it'll be savable outside function
+}
+
+# frequency RATIO of a sequence
+#' Plot Ortholog (gene/motif) Occurrence Ratio
+#' @param fastaPath is the filepath for input FASTA file containing sequences
+#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @return barplot of Frequency Ratio for all sequences in FASTA file
+#' @export
+#' @import ggplot2
+freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
+
+  # Input: Path to FASTA file,
+  #        Pattern of the target orthologous motif / gene subsequence
+
+  # Get tibble containing quantified search results
+  motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
 
   # Title of plot
   plotTitle <- paste("Frequency Ratio of pattern", pattern, "per Sequence")
@@ -390,6 +320,8 @@ freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGC
                        "per sequence \n", plotPosFreqCap
   )
 
+  id <- ratioMotif <- NULL
+
   plot <- motifDF %>%
     ggplot2::ggplot(ggplot2::aes(x=id, y=ratioMotif))+
     ggplot2::geom_col(position = "dodge", fill="dark red") +
@@ -401,8 +333,3 @@ freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGC
 
   return(plot) # Return the plot so it'll be savable outside function
 }
-
-# Calling the Functions Above ====================
-
-#annotateSeq(fastaPath="./inst/extdata/assembly.fasta")
-#annotateSeq(fastaPath="./inst/extdata/POSPL_seq.fasta")

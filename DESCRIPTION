@@ -26,9 +26,10 @@ Imports:
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Suggests: 
-    testthat,
+    testthat (>= 3.0.0),
     knitr,
-    rmarkdown,
+    rmarkdown
 VignetteBuilder: knitr
 URL: https://github.com/karynkomatsu/orthoVisualizer
 BugReports: https://github.com/karynkomatsu/orthoVisualizer/issues
+Config/testthat/edition: 3
