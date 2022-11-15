@@ -75,22 +75,19 @@ details. An overview of the package is illustrated below.
 
 ## Contributions
 
-The author of the package is Karyn Komatsu. All functions makes use of
-`biocManager` R package to install Bioconductor packages and
-`BiocGenerics` to re-format strings of DNA sequence in FASTA file for
-easier analysis. The *annotateSeq* function makes use of substring
-function from `Biostrings` R package to manipulate large strings (DNA
-sequences) for human-friendly, legible presentation of sequences. The
+The author of the package is Karyn Komatsu. The *annotateSeq* function
+mainly works with string manipulation, involving heavy utilization of
+functions like substring or cat, paste from `base` R package. The
 *quantSeq* function uses tibble function from `tibble` R package to
 create a tibble object containing quantity data of orthologue
 subsequence abundance. The *freqSeq* and *freqRatioSeq* functions
 utilize pipe operator from `magrittr` R package and mutate function from
 `dplyr` function for manipulating data to allow better visualization.
-Many functions, such as ggplot, aes, geom\_col, labs functions were used
-from `ggplot2` and `tidyverse` R packages for generating visualization
-of ortholog sequence abundance. The frequency ratio used in generation
-of bar plot for *freqRatioSeq* function are calculated using a function
-written by the author.
+Many functions, such as ggplot, aes, geom_col, labs functions were used
+from `ggplot2` R package for generating visualization of ortholog
+sequence abundance. The frequency ratio used in generation of bar plot
+for *freqRatioSeq* function are calculated using a function written by
+the author.
 
 ## References
 
@@ -106,16 +103,7 @@ Hashim, FA., et al. (2019) Review of Different Sequence Motif Finding
 Algorithms. *Avicenna Journal of Medical Biotechnology*, U.S. National
 Library of Medicine, <https://pubmed.ncbi.nlm.nih.gov/31057715/>.
 
-Huber, W. et al. (2015). Orchestrating high-throughput genomic analysis
-with Bioconductor. *Nature Methods*, 12(2), 115–121.
-<http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html>.
-
-Morgan, M. Access the Bioconductor Project Package Repository \[R
-Package BiocManager Version 1.30.19\]. *The Comprehensive R Archive
-Network (CRAN)*, 25 Oct. 2022,
-<https://cran.r-project.org/web/packages/BiocManager/index.html>.
-
-Müller, K., et al. In-Line Documentation for R \[R Package Roxygen2
+Muller, K., et al. In-Line Documentation for R \[R Package Roxygen2
 Version 7.2.2\]. *The Comprehensive R Archive Network (CRAN)*, 22 July.
 2022, <https://cran.r-project.org/web/packages/roxygen2/index.html>.
 
@@ -143,11 +131,6 @@ Wickham, H., et al. In-Line Documentation for R \[R Package Roxygen2
 Version 7.2.2\]. *The Comprehensive R Archive Network (CRAN*), 11
 Nov. 2022,
 <https://cran.r-project.org/web/packages/roxygen2/index.html>.
-
-Wickham, H. Easily Install and Load the ‘Tidyverse’ \[R Package
-Tidyverse Version 1.3.2\]. *The Comprehensive R Archive Network (CRAN)*,
-18 July 2022,
-<https://cran.r-project.org/web/packages/tidyverse/index.html>.
 
 ## Acknowledgements
 

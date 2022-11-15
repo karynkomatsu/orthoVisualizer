@@ -28,28 +28,8 @@
 #' DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
 #' annotateSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
 #'
-#' @references
-#' Pagès H., et al. (2022). Biostrings: Efficient manipulation of biological
-#' strings. R package version 2.66.0, \href{https://bioconductor.org/packages/Biostrings}{Link}
-#'
-#' @importFrom Biostrings substring
 #' @export
-annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
-
-  # Input: Path to FASTA file, Pattern of the target orthologous motif / gene subsequence
-
-  # Annotate input FASTA sequence with Mbp1 binding motifs potentially observed.
-  # Gathering required information from the FASTA file and combine the helper
-  # functions to print the annotated result.
-  # Print: Formatted annotation of FASTA file at the inputted file path.
-
-  # Check if required packages installed
-  if (! requireNamespace("BiocManager", quietly = TRUE)) {
-    install.packages("BiocManager")
-  }
-  if (! requireNamespace("Biostrings", quietly = TRUE)) {
-    BiocManager::install("Biostrings")
-  }
+annotateSeq <- function(fastaPath, pattern) {
 
   # Read, validate, and load in the FASTA data from path
   fastaDF <- loadFASTA(fastaPath)  # Dataframe for FASTA sequences
@@ -67,7 +47,7 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
     }
 
     # Add all the lines of sequences
-    splitSeq <- Biostrings::substring(fastaDF$seq[i], start, stop)
+    splitSeq <- base::substring(fastaDF$seq[i], start, stop)
 
     # Iterate upstream and find any motifs that could be the inputted binding motifs
     # (ie. find all matches of the inputted subsequence)
@@ -111,13 +91,13 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
 #' quantSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
 #'
 #' @references
-#' Müller, K., et al. In-Line Documentation for R
+#' Muller, K., et al. In-Line Documentation for R
 #' R Package Roxygen2 Version 7.2.2. Comprehensive R Archive Network (CRAN),
 #' 22 July. 2022, \href{https://cran.r-project.org/web/packages/roxygen2/index.html}{Link}.
 #'
 #' @export
 #' @importFrom tibble tibble
-quantSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
+quantSeq <- function(fastaPath, pattern) {
 
   # Input: Path to FASTA file,
   #        Pattern of the target orthologous motif / gene subsequence
@@ -213,7 +193,7 @@ quantSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") 
 #' @import magrittr
 #' @import dplyr
 #' @import ggplot2
-freqSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
+freqSeq <- function(fastaPath, pattern) {
 
   # Get quantity info
   motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
@@ -284,7 +264,7 @@ freqSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
 #' @import magrittr
 #' @import dplyr
 #' @import ggplot2
-freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
+freqRatioSeq <- function(fastaPath, pattern) {
 
   # Input: Path to FASTA file,
   #        Pattern of the target orthologous motif / gene subsequence
@@ -326,16 +306,11 @@ freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGC
 #' @return Returns loaded FASTA in optimal format for analysis
 #'
 #' @references
-#' Morgan, M. Access the Bioconductor Project Package Repository
-#' R Package BiocManager Version 1.30.19. Comprehensive R Archive Network (CRAN),
-#' 25 Oct. 2022, \href{https://cran.r-project.org/web/packages/BiocManager/index.html}{Link}.
+#' Muller, K., et al. In-Line Documentation for R
+#' R Package Roxygen2 Version 7.2.2. Comprehensive R Archive Network (CRAN),
+#' 22 July. 2022, \href{https://cran.r-project.org/web/packages/roxygen2/index.html}{Link}.
 #'
-#' Huber, W. et al. (2015). Orchestrating high-throughput genomic analysis with
-#' Bioconductor. Nature Methods, 12(2), 115–121.
-#' \href{http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html}{Link}.
-#'
-#' @importFrom BiocManager install
-#' @importFrom BiocGenerics paste
+#' @importFrom tibble tibble
 loadFASTA <- function(fastaPath){
 
   # Read FASTA file from its path
@@ -358,7 +333,7 @@ loadFASTA <- function(fastaPath){
   for (i in 1:length(lineheads)){
     if (i == length(lineheads)){
       start[i] <- (lineheads[i] + 1)
-      end[i] <- length(fastaFile)#BiocGenerics::
+      end[i] <- length(fastaFile)
       ithSeq[i] <- paste(fastaFile[start[i]:end[i]], collapse = "", sep="")
     } else {
       start[i] <- (lineheads[i] + 1)
@@ -375,7 +350,7 @@ loadFASTA <- function(fastaPath){
 }
 
 
-findMotifs <- function(seq, pattern = "CGCG") {
+findMotifs <- function(seq, pattern) {
 
   patt <- paste(".",pattern,".", sep="")  # Get regex expression ".[pattern]."
   matches <- gregexpr(patt, seq)  # Return start index of each match found

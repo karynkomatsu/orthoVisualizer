@@ -17,10 +17,6 @@ LazyData: true
 Depends: R (>= 3.0.0)
 Imports: 
     ggplot2,
-    tidyverse,
-    BiocGenerics,
-    BiocManager,
-    Biostrings,
     tibble,
     magrittr,
     dplyr,
