@@ -2,7 +2,7 @@
 % Please edit documentation in R/visualizeSeq.R
 \name{freqRatioSeq}
 \alias{freqRatioSeq}
-\title{Plot Ortholog (gene/motif) Occurrence Ratio}
+\title{Plot Ortholog Subsequence (gene/motif) Occurrence Ratio}
 \usage{
 freqRatioSeq(fastaPath = "./inst/extdata/assembly.fasta", pattern = "CGCG")
 }
@@ -12,8 +12,43 @@ freqRatioSeq(fastaPath = "./inst/extdata/assembly.fasta", pattern = "CGCG")
 \item{pattern}{is the ortholog gene/motif subsequence to look for}
 }
 \value{
-barplot of Frequency Ratio for all sequences in FASTA file
+Returns a barplot of frequency ratio for all sequences in FASTA file.
+Each bar represents a sequence, and bar height is the frequency ratio
+in that sequence.
+Frequency ratio = (Number of Occurrence) / (Length of Seq / Length of pattern)
 }
 \description{
-Plot Ortholog (gene/motif) Occurrence Ratio
+A function that plots ratio of user-inputted ortholog pattern appearance
+in each sequence in FASTA file. Each bar represents one sequence.
+}
+\examples{
+
+#Example 1:
+#Generate plot for FASTA file containing 1 DNA sequence (1 bar) and target
+#orthologous binding motif pattern "CGCG".
+# Get raw data
+placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+freqRatioSeq(fastaPath = placenta_path, pattern = "CGCG")
+
+#Example 2:
+#Generate plot for FASTA file containing 6 DNA sequences (6 bars) and target
+#orthologous binding motif pattern "CGCG".
+# Get raw data
+DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+freqRatioSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+
+}
+\references{
+Bache, SM., et al. A Forward-Pipe Operator for R
+R Package Magrittr Version 2.0.3. Comprehensive R Archive Network (CRAN),
+30 Mar. 2022, \href{https://cran.r-project.org/web/packages/magrittr/index.html}{Link}.
+
+Wickham, H., et al. A Grammar of Data Manipulation
+R Package Dplyr Version 1.0.10. The Comprehensive R Archive Network (CRAN),
+1 Sept. 2022, \href{https://cran.r-project.org/web/packages/dplyr/index.html}{Link}.
+
+Wickham, H. et al. Create Elegant Data Visualisations Using the Grammar of
+Graphics R Package GGPLOT2 Version 3.4.0.
+The Comprehensive R Archive Network (CRAN), 4 Nov. 2022,
+\href{https://cran.r-project.org/web/packages/ggplot2/index.html}{Link}.
 }

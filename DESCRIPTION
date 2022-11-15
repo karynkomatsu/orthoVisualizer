@@ -3,7 +3,9 @@ Type: Package
 Title: Run through DNA Sequences and Identify/Annotate Subsequence Ortholog
     of Interest
 Version: 0.1.0
-Author: Karyn Komatsu
+Author: person("Karyn", "Komatsu", 
+                  email = "karyn.komatsu@mail.utoronto.ca", 
+                  role = c("aut", "cre"))
 Maintainer: Karyn Komatsu <karyn.komatsu@mail.utoronto.ca>
 Description: Look for orthologue subsequence in multi-FASTA file of DNA, 
     where subsequence (for specific motif/gene) is inputted by user.
@@ -32,4 +34,3 @@ Suggests:
 VignetteBuilder: knitr
 URL: https://github.com/karynkomatsu/orthoVisualizer
 BugReports: https://github.com/karynkomatsu/orthoVisualizer/issues
-Config/testthat/edition: 3

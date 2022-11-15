@@ -41,13 +41,6 @@ Shiny app: Under Construction
 
 ## Overview
 
-Provide the following commands, customized to your R package. Then
-provide an overview to briefly describe the main components of the
-package. Include one image illustrating the overview of the package,
-that shows the inputs and outputs. Ensure the image is deposited in the
-correct location, as discussed in class. Point the user to vignettes for
-a tutorial of your package. E.g., <br> <br> <br>
-
 ``` r
 ls("package:orthoVisualizer")
 data(package = "orthoVisualizer") 
@@ -55,91 +48,105 @@ browseVignettes("orthoVisualizer")
 ```
 
 `orthoVisualizer` contains 4 functions for exploratory analysis of
-orthologous gene/motif occurrence in a multi-FASTA file. The
-*annotateSeq* function annotates the occurrence of target subsequence
-(orthologous gene/motif) in each DNA sequence. Specifically, it prints
-all lines of DNA sequences in FASTA file and display an underline of
-“X====Y” for each subsequence occurrence. “=” are the letter that
-matches the subsequence, and “X” and “Y” are nucleotide that comes
-before / after the subseqence, correspondingly. The *quantSeq* returns
-tibble with quantity values related to the subsequence occurrence for
-each of the DNA sequences in FASTA file. (ex. “How many times the
-subsequence occurred”). *freqSeq* is a function that generates barplot
-showing frequency of subsequence occurrence, and each bar represents DNA
-sequence in FASTA file (ie. If there were 5 sequences in FASTA file,
-there would be 5 bars where first sequence in the FASTA is leftmost bar,
-second sequence in the FASTA is second-left bar…). The *freqRatioSeq*
-function works similar, except each bar height represents the frequency
-ratio (“Number of occurrence” / “Length of sequence over Length of
-target subsequence”). Refer to package vignettes for more details. An
-overview of the package is illustrated below.
+orthologous gene/motif occurrence in a multi-FASTA file. There are 3
+main components to this package. “Annotation” (*annotateSeq*),
+“Quantification” (*quantSeq*), and “Visualization” (*freqSeq*,
+*freqRatioSeq*).
 
-![](./inst/extdata/SILVA_A_A1.png)
+The *annotateSeq* function annotates the occurrence of target
+subsequence (orthologous gene/motif) in each DNA sequence. Specifically,
+it prints all lines of DNA sequences in FASTA file and display an
+underline of “X====Y” for each subsequence occurrence. “=” are the
+letter that matches the subsequence, and “X” and “Y” are nucleotide that
+comes before / after the subseqence, correspondingly. The *quantSeq*
+returns tibble with quantity values related to the subsequence
+occurrence for each of the DNA sequences in FASTA file. (ex. “How many
+times the subsequence occurred”). *freqSeq* is a function that generates
+barplot showing frequency of subsequence occurrence, and each bar
+represents DNA sequence in FASTA file (ie. If there were 5 sequences in
+FASTA file, there would be 5 bars where first sequence in the FASTA is
+leftmost bar, second sequence in the FASTA is second-left bar…). The
+*freqRatioSeq* function works similar, except each bar height represents
+the frequency ratio (“Number of occurrence” / “Length of sequence over
+Length of target subsequence”). Refer to package vignettes for more
+details. An overview of the package is illustrated below.
+
+![](./inst/extdata/KOMATSU_K_A4.png)
 
 ## Contributions
 
-contributions from the author and contributions from other
-packages/sources for each function. Remember your individual
-contributions to the package are important. E.g., The author of the
-package is Karyn Komatsu. All functions makes use of `biocManager` R
-package to install Bioconductor packages and `BiocGenerics` to re-format
-strings of DNA sequence in FASTA file for easier analysis. The
-*annotateSeq* function makes use of map function from `mclust` R package
-to generate information criteria values. The Integrated Complete
-Likelihood (ICL) values are calculated using a function written by the
-author. The `stats` R package is used for generating multinomially
-distributed random number vectors. Part of the code for
-*InfCriteriaCalculation* function has been taken from `<NamePackage>` R
-package. (Section of the borrowed code should be clearly indicated and
-referenced in the InfCriteriaCalculation R script). The
-*InfCriteriaPlot* function makes use of the `graphics` R package.
-*NormFactors* function uses Trimmed Mean of M-values (TMM) as
-implemented in `edgeR` R package.
+The author of the package is Karyn Komatsu. All functions makes use of
+`biocManager` R package to install Bioconductor packages and
+`BiocGenerics` to re-format strings of DNA sequence in FASTA file for
+easier analysis. The *annotateSeq* function makes use of substring
+function from `Biostrings` R package to manipulate large strings (DNA
+sequences) for human-friendly, legible presentation of sequences. The
+*quantSeq* function uses tibble function from `tibble` R package to
+create a tibble object containing quantity data of orthologue
+subsequence abundance. The *freqSeq* and *freqRatioSeq* functions
+utilize pipe operator from `magrittr` R package and mutate function from
+`dplyr` function for manipulating data to allow better visualization.
+Many functions, such as ggplot, aes, geom\_col, labs functions were used
+from `ggplot2` and `tidyverse` R packages for generating visualization
+of ortholog sequence abundance. The frequency ratio used in generation
+of bar plot for *freqRatioSeq* function are calculated using a function
+written by the author.
 
 ## References
 
-Provide full references for all sources used, including for the packages
-mentioned under ‘Contributions’, in one format. E.g., <br> <br> <br>
-Akaike, H. (1973). Information theory and an extension of the maximum
-likelihood principle. In *Second International Symposium on Information
-Theory*, New York, USA, 267–281. Springer Verlag.
-<https://link.springer.com/chapter/10.1007/978-1-4612-1694-0_15>.
+Bache, SM., et al. A Forward-Pipe Operator for R \[R Package Magrittr
+Version 2.0.3\]. *The Comprehensive R Archive Network (CRAN)*, 30
+Mar. 2022,
+<https://cran.r-project.org/web/packages/magrittr/index.html>.
 
-Biernacki, C., G. Celeux, and G. Govaert (2000). Assessing a mixture
-model for clustering with the integrated classification likelihood.
-*IEEE Transactions on Pattern Analysis and Machine Intelligence* 22.
-<https://hal.inria.fr/inria-00073163/document>
+Hashim, FA., et al. (2019) Review of Different Sequence Motif Finding
+Algorithms. *Avicenna Journal of Medical Biotechnology*, U.S. National
+Library of Medicine, <https://pubmed.ncbi.nlm.nih.gov/31057715/>.
 
-BioRender. (2020). Image created by Silva, A. Retrieved October 30,
-2020, from <https://app.biorender.com/>
+Huber, W. et al. (2015). Orchestrating high-throughput genomic analysis
+with Bioconductor. *Nature Methods*, 12(2), 115–121.
+<http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html>.
 
-McCarthy, D. J., Chen Y. and Smyth, G. K. (2012). Differential
-expression analysis of multifactor RNA-Seq experiments with respect to
-biological variation. *Nucleic Acids Research* 40. 4288-4297.
-<https://pubmed.ncbi.nlm.nih.gov/22287627/>
+Morgan, M. Access the Bioconductor Project Package Repository \[R
+Package BiocManager Version 1.30.19\]. *The Comprehensive R Archive
+Network (CRAN)*, 25 Oct. 2022,
+<https://cran.r-project.org/web/packages/BiocManager/index.html>.
 
-R Core Team (2021). R: A language and environment for statistical
-computing. R Foundation for Statistical Computing, Vienna, Austria.
-<https://www.R-project.org/>
+Müller, K., et al. In-Line Documentation for R \[R Package Roxygen2
+Version 7.2.2\]. *The Comprehensive R Archive Network (CRAN)*, 22 July.
+2022, <https://cran.r-project.org/web/packages/roxygen2/index.html>.
 
-Schwarz, G. (1978). Estimating the dimension of a model. *The Annals of
-Statistics* 6, 461–464.
-<https://projecteuclid.org/euclid.aos/1176344136>.
-
-Scrucca, L., Fop, M., Murphy, T. B. and Raftery, A. E. (2016) mclust 5:
-clustering, classification and density estimation using Gaussian finite
-mixture models. *The R Journal* 8(1), 289-317.
-<https://www.ncbi.nlm.nih.gov/pmc/articles/PMC5096736/>
+Pagès H., et al. (2022). Biostrings: Efficient manipulation of
+biological strings. *R package version 2.66.0*,
+<https://bioconductor.org/packages/Biostrings>.
 
 Wickham, H. and Bryan, J. (2019). *R Packages* (2nd edition). Newton,
 Massachusetts: O’Reilly Media. <https://r-pkgs.org/>
 
+Wickham, H., et al. A Grammar of Data Manipulation \[R Package Dplyr
+Version 1.0.10\]. *The Comprehensive R Archive Network (CRAN)*, 1
+Sept. 2022, <https://cran.r-project.org/web/packages/dplyr/index.html>.
+
+Wickham, H. et al Create Elegant Data Visualisations Using the Grammar
+of Graphics \[R Package GGPLOT2 Version 3.4.0\]. *The Comprehensive R
+Archive Network (CRAN)*, 4 Nov. 2022,
+<https://cran.r-project.org/web/packages/ggplot2/index.html>.
+
+Wickham, H., et al. In-Line Documentation for R \[R Package Roxygen2
+Version 7.2.2\]. *The Comprehensive R Archive Network (CRAN*), 11
+Nov. 2022,
+<https://cran.r-project.org/web/packages/roxygen2/index.html>.
+
+Wickham, H. Easily Install and Load the ‘Tidyverse’ \[R Package
+Tidyverse Version 1.3.2\]. *The Comprehensive R Archive Network (CRAN)*,
+18 July 2022,
+<https://cran.r-project.org/web/packages/tidyverse/index.html>.
+
 ## Acknowledgements
 
-Provide the following text, customized to your R package. E.g., <br>
-<br> <br> This package was developed as part of an assessment for
-2019-2022 BCB410H: Applied Bioinformatics course at the University of
-Toronto, Toronto, CANADA. `orthoVisualizer` welcomes issues, enhancement
+This package was developed as part of an assessment for 2019-2022
+BCB410H: Applied Bioinformatics course at the University of Toronto,
+Toronto, CANADA. `orthoVisualizer` welcomes issues, enhancement
 requests, and other contributions. To submit an issue, use the [GitHub
-issues](https://github.com/anjalisilva/orthoVisualizer/issues). Many
+issues](https://github.com/karynkomatsu/orthoVisualizer/issues). Many
 thanks to those who provided feedback to improve this package.

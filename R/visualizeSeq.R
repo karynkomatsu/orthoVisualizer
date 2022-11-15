@@ -1,158 +1,38 @@
 
-# OrthoVisualizer -- package for genome analysis (orthologue identification and visualization) of various species
+# Exported functions================
 
-
-# Create helper functions=====================
-#' @importFrom BiocManager install
-#' @importFrom BiocGenerics paste
-loadFASTA <- function(fastaPath){
-  # Input: pathway of FASTA file
-
-  # Read and validate FASTA. Then create and return a tibble with columns:
-  #    Header: Header of the FASTA file
-  #    Sequence: Entire sequence in the FASTA
-
-  # Read FASTA file from its path
-  fastaFile <- base::readLines(fastaPath)
-
-  # Get location header appears
-  lineheads <- grep("^[>]", fastaFile)
-
-  # Insert headers
-  fastahead <- fastaFile[lineheads]
-
-  # Validate sequences
-  if (length(grep("[^ATCG]", fastaFile[-lineheads]))!= 0) {
-    print("ERROR: FASTA formatted incorrectly: nucleotide sequence contains newline or non-ATCG characters.")
-  }
-
-  ithSeq <- c(); start <- c(); end <- c();
-
-  # Insert corresponding sequences
-  for (i in 1:length(lineheads)){
-    if (i == length(lineheads)){
-      start[i] <- (lineheads[i] + 1)
-      end[i] <- length(fastaFile)
-      ithSeq[i] <- BiocGenerics::paste(fastaFile[start[i]:end[i]], collapse = "", sep="")
-    } else {
-      start[i] <- (lineheads[i] + 1)
-      end[i] <- (lineheads[i+1] - 1)
-      ithSeq[i] <- BiocGenerics::paste(fastaFile[start[i]:end[i]], collapse = "", sep="")
-    }
-  }  # End of for loop of i
-
-  # Create tibble
-  # head = header; seq = corresponding sequence;
-  # start = line that seq started; end = line that seq ended
-  fastaDF <- tibble::tibble(head = fastahead, seq = ithSeq, start=start, end=end)
-
-  # Return the dataframe
-  return(fastaDF)
-}
-
-
-findMotifs <- function(upstream, patt = "CGCG") {
-  # Input string: upstream of coding sequence
-
-  # Iterate upstream sequence to find and return vector of indices that might be
-  # motif binding regions (ex. "CGCG" pattern by default).
-
-  patt <- paste(".",patt,".", sep="")  # Get regex expression ".[pattern]."
-  matches <- gregexpr(patt, upstream)  # Return start index of each match found
-
-  # This vector contains starting indices of all matches but DOES NOT HAVE NAMES
-  # It is simply a vector containing indicies but we do not know which substring
-  # this starting index corresponds to
-  motifsIndex <- matches[[1]]
-
-  # Store all matched substrings and treat them as names of motifIndex vector
-  # i.e. Connect matched motifs (substrings) to its corresponding starting index
-  names(motifsIndex) <- regmatches(upstream, matches)[[1]]
-
-  # Contains indices and actual substrings that matched Regex
-  return(motifsIndex)
-}
-
-printAnnotate <- function(header, upstream, pattern, motifIndex){
-  # Inputs:
-  #    header: Header of the FASTA file
-  #    motifIndex: Vector of motifs' starting indices associated with their
-  #               motif substrings.
-
-  # Print header at the very top
-  cat(header, '\n')
-
-  # Print 5'- : Start of sequence
-  cat("5'-")
-
-  # Set indent for aligning the sequences
-  indent <- "   "  # We add this indent to format the upstream
-
-  # Print upstream genome sequence w/ underline annotation
-  for (i in 1:length(upstream)) {
-
-    # Print lines of nucleotides
-    if (i != 1) {
-      # If not first line, print indent to align seq.
-      cat(indent)
-    }
-
-    # Print i-th line of 50 nt in upstream sequence
-    if (i == length(upstream)){
-      cat(upstream[i], "-3'\n", sep="")
-    } else{
-      cat(upstream[i], '\n')
-    }
-
-    # Create string containing ALL annotations for i-th line;
-    # Currently 50 whitespaces, where some of them will be replaced with motif
-    # annotations.
-    annotations <- strrep(" ", 50)
-
-    # Find motif substrings with its start index on line i
-    sel <- ((50*i - 49) <= motifIndex) & (motifIndex <= 50*i)  # Find w/ indices
-    # Find names (i.e Actual 6-char substrings of pattern ".CGCG.")
-    motifs <- names(motifIndex[sel])  # Vector with all motifs in line i
-
-    # Change the motif names to motif annotations by substitution
-    ## TODO: UNcomment the motifs_ann below
-    motifs_ann <- gsub(pattern, "====", motifs)# Change middle 'GCGC' to '==='
-    #motifs_ann <- gsub("[AT]", "=", motifs_ann)   # change A or T at end to '='
-    #motifs_ann <- gsub("[CG]", "X", motifs_ann)   # Change C or G at end to 'X'
-
-    # Know the motif length so that we know where is the end index (ie. end = start + (motif length) - 1)
-    motifLength <- attr(motifIndex, "match.length")[1]
-
-    # Combine all motif annotations for line i into single string
-    # i.e) Select the blanks and replace corresponding indices with the
-    # annotation.
-    for (j in seq_along(motifs_ann)) {
-      mI <- motifIndex[sel][j]   # Starting index of the motif we are looking at
-      start <- mI - 50*(i-1)     # Position (1-50) the motif starts on line i
-      end <- start + motifLength - 1   # Index where motifLength-char-long motif ends on line i
-
-      # The white spaces between the start~end index is replaced with the
-      # corresponding motifLength-char motif annotation.
-      substring(annotations, start, end) <- motifs_ann[j]
-    }
-
-    # Print annotations for line i
-    cat(indent, annotations, '\n', sep="")
-
-
-  } # End of for-loop over upstream seq.
-
-  return(invisible(NULL))
-}
-
-
-# Function that combines all the helper functions================
-
-# For sequence annotation of specific subsequence pattern representing otholog gene/motif
-#' Annotate Ortholog (gene/motif) Occurrence
-#' @param fastaPath is the filepath for input FASTA file containing sequences
-#' @param pattern is the ortholog gene/motif subsequence to look for
-#' @return invisible NULL
+#' Annotate Ortholog Subsequence (gene/motif) Occurrence
+#'
+#' A function that prints each sequence in FASTA file and annotates every
+#'    occurrence of user-inputted ortholog pattern subsequence.
+#'
+#' @param fastaPath is the filepath for input FASTA file containing sequences.
+#' @param pattern is the ortholog gene/motif subsequence to look for.
+#'
+#' @return Returns invisible NULL. Prints each sequence in the FASTA file with
+#'    annotation.
+#'
+#' @examples
+#'
+#' #Example 1:
+#' #Print every sequence in FASTA file containing 1 DNA sequence and annotate
+#' #every occurrences of target orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+#' annotateSeq(fastaPath = placenta_path, pattern = "CGCG")
+#'
+#' #Example 2:
+#' #Print every sequence in FASTA file containing 6 DNA sequences and annotate
+#' #every occurrences of target orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+#' annotateSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+#'
+#' @references
+#' Pagès H., et al. (2022). Biostrings: Efficient manipulation of biological
+#' strings. R package version 2.66.0, \href{https://bioconductor.org/packages/Biostrings}{Link}
+#'
+#' @importFrom Biostrings substring
 #' @export
 annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
 
@@ -174,6 +54,8 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
   # Read, validate, and load in the FASTA data from path
   fastaDF <- loadFASTA(fastaPath)  # Dataframe for FASTA sequences
 
+  start <- stop <- NULL
+
   for (i in 1:length(fastaDF$seq)){
     # Get which of  split the upstream into lines of 50 nucleotides
     start <- seq(1, nchar(fastaDF$seq[i]), 50)             # start indices
@@ -185,7 +67,7 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
     }
 
     # Add all the lines of sequences
-    splitSeq <- substring(fastaDF$seq, start, stop)
+    splitSeq <- Biostrings::substring(fastaDF$seq[i], start, stop)
 
     # Iterate upstream and find any motifs that could be the inputted binding motifs
     # (ie. find all matches of the inputted subsequence)
@@ -198,18 +80,43 @@ annotateSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG
   return(invisible(NULL))
 }
 
-# Give tibble containing:
-# id, header, freq, length of sequence, freq ratio
 #' Count Ortholog (gene/motif) Occurrence
+#'
+#' Plot Ortholog Subsequence (gene/motif) Occurrence
+#'
+#' A function that plots how many times user-inputted ortholog pattern appears
+#'    in each sequence in FASTA file. Each bar represents one sequence.
+#'
 #' @param fastaPath is the filepath for input FASTA file containing sequences
 #' @param pattern is the ortholog gene/motif subsequence to look for
-#' @return tibble of "assigned id", "header", "number of matches",
-#' "ratio of matches"... of all sequences in FASTA file
+#'
+#' @return Returns a tibble of "assigned id", "header", "number of occurrence",
+#'    "length of sequence", "ratio of occurrence (frequency ratio)" in order,
+#'    for every sequence in FASTA file
+#'
+#' @examples
+#'
+#' #Example 1:
+#' #Give the quantity tibble for FASTA file containing 1 DNA sequence (1 bar)
+#' #and target orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+#' quantSeq(fastaPath = placenta_path, pattern = "CGCG")
+#'
+#' #Example 2:
+#' #Give the quantity tibble for FASTA file containing 6 DNA sequences (6 bars)
+#' #and target orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+#' quantSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+#'
+#' @references
+#' Müller, K., et al. In-Line Documentation for R
+#' R Package Roxygen2 Version 7.2.2. Comprehensive R Archive Network (CRAN),
+#' 22 July. 2022, \href{https://cran.r-project.org/web/packages/roxygen2/index.html}{Link}.
+#'
 #' @export
-#' @import ggplot2
-#' @import magrittr
-#' @import dplyr
-#' @import tidyverse
+#' @importFrom tibble tibble
 quantSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
 
   # Input: Path to FASTA file,
@@ -260,17 +167,53 @@ quantSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") 
   return(motifDF) # Return the plot so it'll be savable outside function
 }
 
-# frequency of a sequence
 #' Plot Ortholog Subsequence (gene/motif) Occurrence
+#'
+#' A function that plots how many times user-inputted ortholog pattern appears
+#'    in each sequence in FASTA file. Each bar represents one sequence.
+#'
 #' @param fastaPath is the filepath for input FASTA file containing sequences
 #' @param pattern is the ortholog gene/motif subsequence to look for
-#' @return barplot of Frequency for all sequences in FASTA file
+#'
+#' @return Returns a barplot of frequency (number of occurrence) for all
+#'    sequences in FASTA file. Each bar represents a sequence, and bar height is
+#'    the frequency (number of times pattern occurred) in that sequence.
+#'
+#' @examples
+#'
+#' #Example 1:
+#' #Generate plot for FASTA file containing 1 DNA sequence (1 bar) and target
+#' #orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+#' freqSeq(fastaPath = placenta_path, pattern = "CGCG")
+#'
+#' #Example 2:
+#' #Generate plot for FASTA file containing 6 DNA sequences (6 bars) and target
+#' #orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+#' freqSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+#'
+#' @references
+#' Bache, SM., et al. A Forward-Pipe Operator for R
+#' R Package Magrittr Version 2.0.3. Comprehensive R Archive Network (CRAN),
+#' 30 Mar. 2022, \href{https://cran.r-project.org/web/packages/magrittr/index.html}{Link}.
+#'
+#' Wickham, H., et al. A Grammar of Data Manipulation
+#' R Package Dplyr Version 1.0.10. The Comprehensive R Archive Network (CRAN),
+#' 1 Sept. 2022, \href{https://cran.r-project.org/web/packages/dplyr/index.html}{Link}.
+#'
+#' Wickham, H. et al. Create Elegant Data Visualisations Using the Grammar of
+#' Graphics R Package GGPLOT2 Version 3.4.0.
+#' The Comprehensive R Archive Network (CRAN), 4 Nov. 2022,
+#' \href{https://cran.r-project.org/web/packages/ggplot2/index.html}{Link}.
+#'
 #' @export
+#' @import magrittr
+#' @import dplyr
 #' @import ggplot2
 freqSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
-
-  # Input: Path to FASTA file,
-  #        Pattern of the target orthologous motif / gene subsequence
 
   # Get quantity info
   motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
@@ -293,12 +236,53 @@ freqSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
   return(plot) # Return the plot so it'll be savable outside function
 }
 
-# frequency RATIO of a sequence
-#' Plot Ortholog (gene/motif) Occurrence Ratio
+
+#' Plot Ortholog Subsequence (gene/motif) Occurrence Ratio
+#'
+#' A function that plots ratio of user-inputted ortholog pattern appearance
+#'    in each sequence in FASTA file. Each bar represents one sequence.
+#'
 #' @param fastaPath is the filepath for input FASTA file containing sequences
 #' @param pattern is the ortholog gene/motif subsequence to look for
-#' @return barplot of Frequency Ratio for all sequences in FASTA file
+#'
+#' @return Returns a barplot of frequency ratio for all sequences in FASTA file.
+#'    Each bar represents a sequence, and bar height is the frequency ratio
+#'    in that sequence.
+#'    Frequency ratio = (Number of Occurrence) / (Length of Seq / Length of pattern)
+#'
+#' @examples
+#'
+#' #Example 1:
+#' #Generate plot for FASTA file containing 1 DNA sequence (1 bar) and target
+#' #orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+#' freqRatioSeq(fastaPath = placenta_path, pattern = "CGCG")
+#'
+#' #Example 2:
+#' #Generate plot for FASTA file containing 6 DNA sequences (6 bars) and target
+#' #orthologous binding motif pattern "CGCG".
+#' # Get raw data
+#' DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+#' freqRatioSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+#'
+#' @references
+#' Bache, SM., et al. A Forward-Pipe Operator for R
+#' R Package Magrittr Version 2.0.3. Comprehensive R Archive Network (CRAN),
+#' 30 Mar. 2022, \href{https://cran.r-project.org/web/packages/magrittr/index.html}{Link}.
+#'
+#' Wickham, H., et al. A Grammar of Data Manipulation
+#' R Package Dplyr Version 1.0.10. The Comprehensive R Archive Network (CRAN),
+#' 1 Sept. 2022, \href{https://cran.r-project.org/web/packages/dplyr/index.html}{Link}.
+#'
+#' Wickham, H. et al. Create Elegant Data Visualisations Using the Grammar of
+#' Graphics R Package GGPLOT2 Version 3.4.0.
+#' The Comprehensive R Archive Network (CRAN), 4 Nov. 2022,
+#' \href{https://cran.r-project.org/web/packages/ggplot2/index.html}{Link}.
+#'
 #' @export
+#' @import magrittr
+#' @import dplyr
 #' @import ggplot2
 freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGCG") {
 
@@ -332,4 +316,157 @@ freqRatioSeq <- function(fastaPath="./inst/extdata/assembly.fasta", pattern="CGC
   plot # Display the plot
 
   return(plot) # Return the plot so it'll be savable outside function
+}
+
+# Create helper functions=====================
+
+#' Loads FASTA files (helper function)
+#' @param fastaPath Pathway of FASTA file with DNA Sequence
+#'
+#' @return Returns loaded FASTA in optimal format for analysis
+#'
+#' @references
+#' Morgan, M. Access the Bioconductor Project Package Repository
+#' R Package BiocManager Version 1.30.19. Comprehensive R Archive Network (CRAN),
+#' 25 Oct. 2022, \href{https://cran.r-project.org/web/packages/BiocManager/index.html}{Link}.
+#'
+#' Huber, W. et al. (2015). Orchestrating high-throughput genomic analysis with
+#' Bioconductor. Nature Methods, 12(2), 115–121.
+#' \href{http://www.nature.com/nmeth/journal/v12/n2/full/nmeth.3252.html}{Link}.
+#'
+#' @importFrom BiocManager install
+#' @importFrom BiocGenerics paste
+loadFASTA <- function(fastaPath){
+
+  # Read FASTA file from its path
+  fastaFile <- readLines(fastaPath)
+
+  # Get location header appears
+  lineheads <- grep("^[>]", fastaFile)
+
+  # Insert headers
+  fastahead <- fastaFile[lineheads]
+
+  # Validate sequences
+  if (length(grep("[^ATCG]", fastaFile[-lineheads]))!= 0) {
+    print("ERROR: FASTA formatted incorrectly: nucleotide sequence contains newline or non-ATCG characters.")
+  }
+
+  ithSeq <- c(); start <- c(); end <- c();
+
+  # Insert corresponding sequences
+  for (i in 1:length(lineheads)){
+    if (i == length(lineheads)){
+      start[i] <- (lineheads[i] + 1)
+      end[i] <- length(fastaFile)#BiocGenerics::
+      ithSeq[i] <- paste(fastaFile[start[i]:end[i]], collapse = "", sep="")
+    } else {
+      start[i] <- (lineheads[i] + 1)
+      end[i] <- (lineheads[i+1] - 1)
+      ithSeq[i] <- paste(fastaFile[start[i]:end[i]], collapse = "", sep="")
+    }
+  }  # End of for loop of i
+
+  # Create tibble
+  fastaDF <- tibble::tibble(head = fastahead, seq = ithSeq, start=start, end=end)
+
+  # Return the dataframe
+  return(fastaDF)
+}
+
+
+findMotifs <- function(seq, pattern = "CGCG") {
+
+  patt <- paste(".",pattern,".", sep="")  # Get regex expression ".[pattern]."
+  matches <- gregexpr(patt, seq)  # Return start index of each match found
+
+  # This vector contains starting indices of all matches w/o names
+  # Simply a vector containing indicies but we do not know which substring
+  # this starting index corresponds to
+  motifsIndex <- matches[[1]]
+
+  # Store all matched substrings and treat them as names of motifIndex vector
+  # i.e. Connect matched motifs (substrings) to its corresponding starting index
+  names(motifsIndex) <- regmatches(seq, matches)[[1]]
+
+  # Contains indices and actual substrings that matched Regex
+  return(motifsIndex)
+}
+
+#' Print Annotation of Ortholog Subsequence (gene/motif) Occurrence
+#'
+#' @param header is the header of sequence
+#' @param seq is the DNA sequence to print annotation
+#' @param pattern is the ortholog gene/motif subsequence to look for.
+#' @param motifIndex is list of indices of where the pattern is found in seq
+#'
+#' @return Returns invisible NULL. Prints each sequence in the FASTA file with
+#'    annotation.
+#'
+printAnnotate <- function(header, seq, pattern, motifIndex){
+
+  # Print header at the very top
+  cat(header, '\n')
+
+  # Print 5'- : Start of sequence
+  cat("5'-")
+
+  # Set indent for aligning the sequences
+  indent <- "   "  # Indent for formatting
+
+  # Print seq genome sequence w/ underline annotation
+  for (i in 1:length(seq)) {
+
+    # Print lines of nucleotides
+    if (i != 1) {
+      # If not first line, print indent to align seq.
+      cat(indent)
+    }
+
+    # Print i-th line of 50 nt in sequence
+    if (i == length(seq)){
+      cat(seq[i], "-3'\n", sep="")
+    } else{
+      cat(seq[i], '\n')
+    }
+
+    # Create string containing ALL annotations for i-th line;
+    # Currently 50 whitespaces, where some of them will be replaced with motif
+    # annotations.
+    annotations <- strrep(" ", 50)
+
+    # Find motif substrings with its start index on line i
+    sel <- ((50*i - 49) <= motifIndex) & (motifIndex <= 50*i)  # Find w/ indices
+    # Find names (i.e Actual 6-char substrings of pattern ".CGCG.")
+    motifs <- names(motifIndex[sel])  # Vector with all motifs in line i
+
+    patt_sign <- rep("=", nchar(pattern))
+    patt_sign <- paste(patt_sign, sep="", collapse = "")
+
+    # Change the motif names to motif annotations by substitution
+    motifs_ann <- gsub(pattern, patt_sign, motifs)# Change middle 'GCGC' to '==='
+
+    # Know the motif length so that we know where is the end index (ie. end = start + (motif length) - 1)
+    motifLength <- attr(motifIndex, "match.length")[1]
+
+    # Combine all motif annotations for line i into single string
+    # i.e) Select the blanks and replace corresponding indices with the
+    # annotation.
+    for (j in seq_along(motifs_ann)) {
+      mI <- motifIndex[sel][j]   # Starting index of the motif we are looking at
+      start <- mI - 50*(i-1)     # Position (1-50) the motif starts on line i
+      end <- start + motifLength - 1   # Index where motifLength-char-long motif ends on line i
+
+      # The white spaces between the start~end index is replaced with the
+      # corresponding motifLength-char motif annotation.
+      substring(annotations, start, end) <- motifs_ann[j]
+    }
+
+    # Print annotations for line i
+    cat(indent, annotations, '\n', sep="")
+
+
+  } # End of for-loop over seq.
+
+  return(invisible(NULL))
 }

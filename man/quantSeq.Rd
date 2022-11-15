@@ -12,9 +12,36 @@ quantSeq(fastaPath = "./inst/extdata/assembly.fasta", pattern = "CGCG")
 \item{pattern}{is the ortholog gene/motif subsequence to look for}
 }
 \value{
-tibble of "assigned id", "header", "number of matches",
-"ratio of matches"... of all sequences in FASTA file
+Returns a tibble of "assigned id", "header", "number of occurrence",
+"length of sequence", "ratio of occurrence (frequency ratio)" in order,
+for every sequence in FASTA file
 }
 \description{
-Count Ortholog (gene/motif) Occurrence
+Plot Ortholog Subsequence (gene/motif) Occurrence
+}
+\details{
+A function that plots how many times user-inputted ortholog pattern appears
+in each sequence in FASTA file. Each bar represents one sequence.
+}
+\examples{
+
+#Example 1:
+#Give the quantity tibble for FASTA file containing 1 DNA sequence (1 bar)
+#and target orthologous binding motif pattern "CGCG".
+# Get raw data
+placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+quantSeq(fastaPath = placenta_path, pattern = "CGCG")
+
+#Example 2:
+#Give the quantity tibble for FASTA file containing 6 DNA sequences (6 bars)
+#and target orthologous binding motif pattern "CGCG".
+# Get raw data
+DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+quantSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+
+}
+\references{
+Müller, K., et al. In-Line Documentation for R
+R Package Roxygen2 Version 7.2.2. Comprehensive R Archive Network (CRAN),
+22 July. 2022, \href{https://cran.r-project.org/web/packages/roxygen2/index.html}{Link}.
 }

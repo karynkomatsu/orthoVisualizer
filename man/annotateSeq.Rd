@@ -2,18 +2,41 @@
 % Please edit documentation in R/visualizeSeq.R
 \name{annotateSeq}
 \alias{annotateSeq}
-\title{Annotate Ortholog (gene/motif) Occurrence}
+\title{Annotate Ortholog Subsequence (gene/motif) Occurrence}
 \usage{
 annotateSeq(fastaPath = "./inst/extdata/assembly.fasta", pattern = "CGCG")
 }
 \arguments{
-\item{fastaPath}{is the filepath for input FASTA file containing sequences}
+\item{fastaPath}{is the filepath for input FASTA file containing sequences.}
 
-\item{pattern}{is the ortholog gene/motif subsequence to look for}
+\item{pattern}{is the ortholog gene/motif subsequence to look for.}
 }
 \value{
-invisible NULL
+Returns invisible NULL. Prints each sequence in the FASTA file with
+annotation.
 }
 \description{
-Annotate Ortholog (gene/motif) Occurrence
+A function that prints each sequence in FASTA file and annotates every
+occurrence of user-inputted ortholog pattern subsequence.
+}
+\examples{
+
+#Example 1:
+#Print every sequence in FASTA file containing 1 DNA sequence and annotate
+#every occurrences of target orthologous binding motif pattern "CGCG".
+# Get raw data
+placenta_path <-  system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+annotateSeq(fastaPath = placenta_path, pattern = "CGCG")
+
+#Example 2:
+#Print every sequence in FASTA file containing 6 DNA sequences and annotate
+#every occurrences of target orthologous binding motif pattern "CGCG".
+# Get raw data
+DNA_seq_path <-  system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+annotateSeq(fastaPath = DNA_seq_path, pattern = "CGCG")
+
+}
+\references{
+Pagès H., et al. (2022). Biostrings: Efficient manipulation of biological
+strings. R package version 2.66.0, \href{https://bioconductor.org/packages/Biostrings}{Link}
 }
