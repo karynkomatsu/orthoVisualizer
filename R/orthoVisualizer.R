@@ -49,7 +49,7 @@ annotateSeq <- function(fastaPath, pattern) {
     # Add all the lines of sequences
     splitSeq <- base::substring(fastaDF$seq[i], start, stop)
 
-    # Iterate upstream and find any motifs that could be the inputted binding motifs
+    # Iterate seq and find any motifs that could be the inputted binding motifs
     # (ie. find all matches of the inputted subsequence)
     # Vectors of motifs & starting indices
     motifIndex <- findMotifs(fastaDF$seq[i], pattern)
@@ -190,7 +190,7 @@ quantSeq <- function(fastaPath, pattern) {
 #' \href{https://cran.r-project.org/web/packages/ggplot2/index.html}{Link}.
 #'
 #' @export
-#' @import magrittr
+#' @importFrom magrittr %>%
 #' @import dplyr
 #' @import ggplot2
 freqSeq <- function(fastaPath, pattern) {
@@ -261,13 +261,10 @@ freqSeq <- function(fastaPath, pattern) {
 #' \href{https://cran.r-project.org/web/packages/ggplot2/index.html}{Link}.
 #'
 #' @export
-#' @import magrittr
+#' @importFrom magrittr %>%
 #' @import dplyr
 #' @import ggplot2
 freqRatioSeq <- function(fastaPath, pattern) {
-
-  # Input: Path to FASTA file,
-  #        Pattern of the target orthologous motif / gene subsequence
 
   # Get tibble containing quantified search results
   motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
@@ -324,7 +321,7 @@ loadFASTA <- function(fastaPath){
 
   # Validate sequences
   if (length(grep("[^ATCG]", fastaFile[-lineheads]))!= 0) {
-    print("ERROR: FASTA formatted incorrectly: nucleotide sequence contains newline or non-ATCG characters.")
+    stop("ERROR: FASTA formatted incorrectly: nucleotide sequence contains newline or non-ATCG characters.")
   }
 
   ithSeq <- c(); start <- c(); end <- c();

@@ -1,6 +1,7 @@
 ---
 title: "A tour of orthoVisualizer"
 author: "Karyn Komatsu"
+date: "`r format(Sys.time(), '%d %b %Y')`"
 output: 
   rmarkdown::html_vignette:
     toc: true
@@ -26,8 +27,7 @@ knit_hooks$set(par = function(before, options, envir)
 })
 set.seed(1) # for exact reproducibility
 ```
-----------
-
+       
 ## Introduction
 
 `orthoVisualizer` is R package to explore the abundance of orthologous gene subsequence across multiple DNA sequences, and provide annotations/visualizations for intuitive analysis. Modern orthologue detection tools specialize in comparing two sequences (species) at a time and refer to database to look for corresponding orthologues. However, such tools will not work with newly-discovered sequences that are yet to be recorded to the database. `orthoVisualizer` addresses this issue by allowing the user to specify which particular subsequence to look for in multiple of species (sequences) at once. Such preliminary analysis and getting the overview of abundance among multiple sequences will give researchers the idea of which species to look into (those with higher abundance ratio) for researching their target orthologue, which is an essential step in orthologous gene / motif exploration. **This document gives a tour of orthoVisualizer (version 0.1.0)**. It was written in R Markdown, using the [knitr](https://cran.r-project.org/package=knitr) package for production. See `help(package = "orthoVisualizer")` for further details. 
@@ -44,26 +44,33 @@ To list all sample functions available in the package:
 ls("package:orthoVisualizer")
 ```
 
+<br>
+
 ## Components
 
-Inputs and Graphical Outputs are as following
+Components are as following.
 
 <div style="text-align:center"><img src="KOMATSU_K_A4.png" alt="KOMATSU_K_A4" width="500"/>
 
 <div style="text-align:left">
 
-## Functions
+### Functions
 
 * The **annotateSeq** function prints each DNA sequence in inputted FASTA file along with annoation of where the user-inputted substring (which should be some orthologous gene or motif).
-Example:
+
+annotateSeq() Example:
+
 ``` r
 #Get data inside inst/extdata of the orthoVisualizer package
 placenta_path <- system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
 annoateSeq(fastaPath=placenta_path, pattern="CGCG")
 #Returns invisible NULL and prints sequences along with annotations.
 ```
+
 * The **quantSeq** function finds user-inputted patterns in each of the sequences recorded in the inputted FASTA file, then returns tibble containing relevant quantity values.
-Example:
+
+quantSeq() Example:
+
 ```r
 #Get data inside inst/extdata of the orthoVisualizer package
 DNA_path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
@@ -73,7 +80,9 @@ DNA_df
 ```
 
 * The **freqSeq** function generates barplot where each bar represents a sequence in input FASTA file, and height represents frequency (number of occurrence) of the pattern (in the example below: "CGCG") for the corresponding sequence.
-Example:
+
+freqSeq() Example:
+
 ```r
 #Get data inside inst/extdata of the orthoVisualizer package
 DNA_path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
@@ -86,8 +95,10 @@ freqSeq(fastaPath=DNA_path, pattern="CGCG")
 * The **freqRatioSeq** function generates barplot where each bar represents a sequence in input FASTA file, and height represents frequency ratio of the pattern (in the example below: "CGCG") for the corresponding sequence. 
 $\text{Frequency Ratio} = \frac{\text{Frequency (ie. Number of Occurrence)}}{\frac{\text{Length of Sequence}}{\text{Length of Pattern}}}$
 
-Example:
+freqRatioSeq() Example:
+
 For this example, since we are looking at "CGCG", a 4 character pattern, if a sequence has 12 nucleotides and has one occurrence of "CGCG", we get: $\text{Frequency Ratio} = \frac{\text{Frequency (ie. Number of Occurrence)}}{\frac{\text{Length of Sequence}}{\text{Length of Pattern}}} = \frac{1}{\frac{12}{4}} = \frac{1}{3}$
+
 ```r
 #Get data inside inst/extdata of the orthoVisualizer package
 DNA_path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
@@ -97,11 +108,16 @@ freqSeq(fastaPath=DNA_path, pattern="CGCG")
 #pattern, and each bars representing each sequence.
 ```
 
+<br>
+
+<div style="text-align:left">
+
 ## Package References
 
 [Komatsu, K. (2022) orthoVisualizer: An Example R Package For
   BCB410H. Unpublished.](https://github.com/karynkomatsu/orthoVisualizer)
 
+<br>
 
 ## Other References
 
@@ -112,6 +128,8 @@ Google Drawings. (2022). Image created by Komatsu, K. Retrieved November 14, 202
 Hashim, FA., et al. (2019) Review of Different Sequence Motif Finding Algorithms. *Avicenna Journal of Medical Biotechnology*, U.S. National Library of Medicine, https://pubmed.ncbi.nlm.nih.gov/31057715/. 
 
 Muller, K., et al. In-Line Documentation for R [R Package Roxygen2 Version 7.2.2]. *The Comprehensive R Archive Network (CRAN)*, 22 July. 2022, https://cran.r-project.org/web/packages/roxygen2/index.html. 
+
+Steipe, Boris. BCH441 Integrator Unit: Genome Annotation. *Integrator Unit: Genome Annotation*, 2021, http://steipe.biochemistry.utoronto.ca/bio/ABC-INT-Genome_annotation.html. 
 
 Pagès H., et al. (2022). Biostrings: Efficient manipulation of biological strings. *R package version 2.66.0*, https://bioconductor.org/packages/Biostrings.
 

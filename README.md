@@ -107,6 +107,10 @@ Muller, K., et al. In-Line Documentation for R \[R Package Roxygen2
 Version 7.2.2\]. *The Comprehensive R Archive Network (CRAN)*, 22 July.
 2022, <https://cran.r-project.org/web/packages/roxygen2/index.html>.
 
+Steipe, Boris. BCH441 Integrator Unit: Genome Annotation. *Integrator
+Unit: Genome Annotation*, 2021,
+<http://steipe.biochemistry.utoronto.ca/bio/ABC-INT-Genome_annotation.html>.
+
 Pagès H., et al. (2022). Biostrings: Efficient manipulation of
 biological strings. *R package version 2.66.0*,
 <https://bioconductor.org/packages/Biostrings>.
