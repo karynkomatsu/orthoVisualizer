@@ -99,6 +99,9 @@ Version 2.0.3\]. *The Comprehensive R Archive Network (CRAN)*, 30
 Mar. 2022,
 <https://cran.r-project.org/web/packages/magrittr/index.html>.
 
+Google Drawings. (2022). Image created by Komatsu, K. Retrieved November
+14, 2022, from <https://docs.google.com/drawings/>
+
 Hashim, FA., et al. (2019) Review of Different Sequence Motif Finding
 Algorithms. *Avicenna Journal of Medical Biotechnology*, U.S. National
 Library of Medicine, <https://pubmed.ncbi.nlm.nih.gov/31057715/>.
@@ -119,6 +122,10 @@ Version 7.2.2\]. *The Comprehensive R Archive Network (CRAN)*, 22 July.
 Pagès H., et al. (2022). Biostrings: Efficient manipulation of
 biological strings. *R package version 2.66.0*,
 <https://bioconductor.org/packages/Biostrings>.
+
+R Core Team (2020). R: A language and environment for statistical
+computing. *R Foundation for Statistical Computing*, Vienna, Austria.
+<https://www.R-project.org/>
 
 Wickham, H. and Bryan, J. (2019). *R Packages* (2nd edition). Newton,
 Massachusetts: O’Reilly Media. <https://r-pkgs.org/>
