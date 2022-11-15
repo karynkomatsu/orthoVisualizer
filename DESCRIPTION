@@ -14,7 +14,7 @@ Description: Look for orthologue subsequence in multi-FASTA file of DNA,
 License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
-Depends: R (>= 4.1.0)
+Depends: R (>= 4.0.0)
 Imports: 
     ggplot2,
     tidyverse,
