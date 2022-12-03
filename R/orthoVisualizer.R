@@ -6,8 +6,10 @@
 #' A function that prints each sequence in FASTA file and annotates every
 #'    occurrence of user-inputted ortholog pattern subsequence.
 #'
-#' @param fastaPath is the filepath for input FASTA file containing sequences.
-#' @param pattern is the ortholog gene/motif subsequence to look for.
+#' @param fastaPath is a character string indicating the file path for input
+#' FASTA file containing DNA sequences.
+#' @param pattern is a character string indicating the ortholog gene/motif
+#' subsequence to search for .
 #'
 #' @return Returns invisible NULL. Prints each sequence in the FASTA file with
 #'    annotation.
@@ -67,8 +69,10 @@ annotateSeq <- function(fastaPath, pattern) {
 #' A function that plots how many times user-inputted ortholog pattern appears
 #'    in each sequence in FASTA file. Each bar represents one sequence.
 #'
-#' @param fastaPath is the filepath for input FASTA file containing sequences
-#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @param fastaPath is a character string indicating the file path for input
+#' FASTA file containing DNA sequences.
+#' @param pattern is a character string indicating the ortholog gene/motif
+#' subsequence to search for
 #'
 #' @return Returns a tibble of "assigned id", "header", "number of occurrence",
 #'    "length of sequence", "ratio of occurrence (frequency ratio)" in order,
@@ -152,8 +156,10 @@ quantSeq <- function(fastaPath, pattern) {
 #' A function that plots how many times user-inputted ortholog pattern appears
 #'    in each sequence in FASTA file. Each bar represents one sequence.
 #'
-#' @param fastaPath is the filepath for input FASTA file containing sequences
-#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @param fastaPath is a character string indicating the file path for input
+#' FASTA file containing DNA sequences.
+#' @param pattern is a character string indicating the ortholog gene/motif
+#' subsequence to search for
 #'
 #' @return Returns a barplot of frequency (number of occurrence) for all
 #'    sequences in FASTA file. Each bar represents a sequence, and bar height is
@@ -222,8 +228,10 @@ freqSeq <- function(fastaPath, pattern) {
 #' A function that plots ratio of user-inputted ortholog pattern appearance
 #'    in each sequence in FASTA file. Each bar represents one sequence.
 #'
-#' @param fastaPath is the filepath for input FASTA file containing sequences
-#' @param pattern is the ortholog gene/motif subsequence to look for
+#' @param fastaPath is a character string indicating the file path for input
+#' FASTA file containing DNA sequences.
+#' @param pattern is a character string indicating the ortholog gene/motif
+#' subsequence to search for
 #'
 #' @return Returns a barplot of frequency ratio for all sequences in FASTA file.
 #'    Each bar represents a sequence, and bar height is the frequency ratio
@@ -369,7 +377,8 @@ findMotifs <- function(seq, pattern) {
 #'
 #' @param header is the header of sequence
 #' @param seq is the DNA sequence to print annotation
-#' @param pattern is the ortholog gene/motif subsequence to look for.
+#' @param pattern is a character string indicating the ortholog gene/motif
+#' subsequence to search for .
 #' @param motifIndex is list of indices of where the pattern is found in seq
 #'
 #' @return Returns invisible NULL. Prints each sequence in the FASTA file with

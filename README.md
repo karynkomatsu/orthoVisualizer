@@ -115,9 +115,9 @@ Pagès H., et al. (2022). Biostrings: Efficient manipulation of
 biological strings. *R package version 2.66.0*,
 <https://bioconductor.org/packages/Biostrings>.
 
-R Core Team (2020). R: A language and environment for statistical
+R Core Team (2022). R: A language and environment for statistical
 computing. *R Foundation for Statistical Computing*, Vienna, Austria.
-<https://www.R-project.org/>
+<https://www.R-project.org/>.
 
 Wickham, H. and Bryan, J. (2019). *R Packages* (2nd edition). Newton,
 Massachusetts: O’Reilly Media. <https://r-pkgs.org/>

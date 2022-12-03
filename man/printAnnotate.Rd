@@ -11,7 +11,8 @@ printAnnotate(header, seq, pattern, motifIndex)
 
 \item{seq}{is the DNA sequence to print annotation}
 
-\item{pattern}{is the ortholog gene/motif subsequence to look for.}
+\item{pattern}{is a character string indicating the ortholog gene/motif
+subsequence to search for .}
 
 \item{motifIndex}{is list of indices of where the pattern is found in seq}
 }

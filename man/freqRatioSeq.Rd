@@ -7,9 +7,11 @@
 freqRatioSeq(fastaPath, pattern)
 }
 \arguments{
-\item{fastaPath}{is the filepath for input FASTA file containing sequences}
+\item{fastaPath}{is a character string indicating the file path for input
+FASTA file containing DNA sequences.}
 
-\item{pattern}{is the ortholog gene/motif subsequence to look for}
+\item{pattern}{is a character string indicating the ortholog gene/motif
+subsequence to search for}
 }
 \value{
 Returns a barplot of frequency ratio for all sequences in FASTA file.
