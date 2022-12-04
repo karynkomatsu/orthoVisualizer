@@ -71,7 +71,7 @@ annotateSeq(fastaPath=path, pattern="CGCG")
 #Returns invisible NULL and prints sequences along with annotations.
 ```
 
-* The **quantSeq** function finds user-inputted patterns in each of the sequences recorded in the inputted FASTA file, then returns tibble containing relevant quantity values.
+* The **quantSeq** function finds user-inputted patterns in each of the sequences recorded in the inputted FASTA file, then returns tibble containing 5 columns: (id, header, number of ortholog motifs found, length of sequence, frequency ratio of motif). See vignette under freqRatioSeq for details on frequency ratio.
 
 quantSeq() Example:
 
