@@ -37,7 +37,11 @@ devtools::install_github("karynkomatsu/orthoVisualizer", build_vignettes = TRUE)
 library("orthoVisualizer")
 ```
 
-Shiny app: Under Construction
+Shiny app:
+
+``` r
+runorthoVisualizer()
+```
 
 ## Overview
 

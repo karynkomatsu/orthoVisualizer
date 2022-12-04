@@ -211,7 +211,7 @@ freqSeq <- function(fastaPath, pattern) {
   id <- numMotif <- NULL
 
   plot <- motifDF %>%
-    ggplot2::ggplot(ggplot2::aes(x=id, y=numMotif))+
+    ggplot2::ggplot(ggplot2::aes(x=as.character(id), y=numMotif))+
     ggplot2::geom_col(position = "dodge", fill="dark blue") +
     ggplot2::labs(title=plotTitle) +
     ggplot2::ylab("Frequency (Number of Occurence)") +
@@ -292,7 +292,7 @@ freqRatioSeq <- function(fastaPath, pattern) {
   id <- ratioMotif <- NULL
 
   plot <- motifDF %>%
-    ggplot2::ggplot(ggplot2::aes(x=id, y=ratioMotif))+
+    ggplot2::ggplot(ggplot2::aes(x=as.character(id), y=ratioMotif))+
     ggplot2::geom_col(position = "dodge", fill="dark red") +
     ggplot2::labs(title=plotTitle, caption = plotCaption) +
     ggplot2::ylab("Frequency Ratio") +

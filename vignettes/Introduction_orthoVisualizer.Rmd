@@ -62,8 +62,12 @@ annotateSeq() Example:
 
 ``` r
 #Get data inside inst/extdata of the orthoVisualizer package
-placenta_path <- system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
-annotateSeq(fastaPath=placenta_path, pattern="CGCG")
+path <- system.file("extdata", "P_Placenta_seq.fasta", package = "orthoVisualizer")
+
+#If using your own fasta file:
+#path <- "C:/Users/filepath_to_fasta/your_data.fasta"
+
+annotateSeq(fastaPath=path, pattern="CGCG")
 #Returns invisible NULL and prints sequences along with annotations.
 ```
 
@@ -73,8 +77,12 @@ quantSeq() Example:
 
 ```r
 #Get data inside inst/extdata of the orthoVisualizer package
-DNA_path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
-DNA_df <- quantSeq(fastaPath=DNA_path, pattern="CGCG")
+path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+
+#If using your own fasta file:
+#path <- "C:/Users/filepath_to_fasta/your_data.fasta"
+
+DNA_df <- quantSeq(fastaPath=path, pattern="CGCG")
 DNA_df
 #Returns a tibble with 5 columns related to pattern "CGCG" matches.
 ```
@@ -85,8 +93,12 @@ freqSeq() Example:
 
 ```r
 #Get data inside inst/extdata of the orthoVisualizer package
-DNA_path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
-freqSeq(fastaPath=DNA_path, pattern="CGCG")
+path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+
+#If using your own fasta file:
+#path <- "C:/Users/filepath_to_fasta/your_data.fasta"
+
+freqSeq(fastaPath=path, pattern="CGCG")
 
 #Returns AND displays a barplot with height being number of occurrences of 
 #pattern, and each bars representing each sequence.
@@ -101,8 +113,12 @@ For this example, since we are looking at "CGCG", a 4 character pattern, if a se
 
 ```r
 #Get data inside inst/extdata of the orthoVisualizer package
-DNA_path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
-freqRatioSeq(fastaPath=DNA_path, pattern="CGCG")
+path <- system.file("extdata", "DNA_seq.fasta", package = "orthoVisualizer")
+
+#If using your own fasta file:
+#path <- "C:/Users/filepath_to_fasta/your_data.fasta"
+
+freqRatioSeq(fastaPath=path, pattern="CGCG")
 
 #Returns AND displays a barplot with height being frequency ratio of 
 #pattern, and each bars representing each sequence.

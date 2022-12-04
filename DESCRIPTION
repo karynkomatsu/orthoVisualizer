@@ -1,7 +1,7 @@
 Package: orthoVisualizer
 Type: Package
-Title: Run through DNA Sequences and Identify/Annotate Subsequence Ortholog
-    of Interest
+Title: Run through DNA Sequences and Quantify/Visualize/Annotate Subsequence 
+    Ortholog of Interest
 Version: 0.1.0
 Author: person("Karyn", "Komatsu", 
                   email = "karyn.komatsu@mail.utoronto.ca", 
@@ -19,7 +19,8 @@ Imports:
     ggplot2,
     tibble,
     magrittr,
-    dplyr
+    dplyr,
+    shiny
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.2.2
 Suggests: 
