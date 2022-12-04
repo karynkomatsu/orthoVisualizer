@@ -77,21 +77,12 @@ ui <- fluidPage(
                            h3("Instructions: Enter values and click 'Run' at the bottom left side."),
                            h4("Ortholog Annotation:"),
                            br(),
-                           verbatimTextOutput("annotation")),
+                           verbatimTextOutput("annotate")),
                   tabPanel("Quantification of Ortholog Gene/Motif in DNASeqs",
                            h3("Instructions: Enter values and click 'Run' at the bottom left side."),
                            h3("Quantification:"),
                            br(),
-                           h4("ID of DNASeq"),
-                           verbatimTextOutput("textOutID"),
-                           h4("Header of DNASeq"),
-                           verbatimTextOutput("textOutHeader"),
-                           h4("Occurrence of Ortholog motif/gene in DNASeq"),
-                           verbatimTextOutput("textOutnumMotif"),
-                           h4("Length of DNASeq"),
-                           verbatimTextOutput("textOutLen"),
-                           h4("Frequency Ratio of ortholog gene/motif in DNASeq"),
-                           verbatimTextOutput("textOutRatio")),
+                           verbatimTextOutput("quantify")),
                   tabPanel("Plot of Ortholog Frequency (Number of Occurrence)",
                            h3("Instructions: Enter values and click 'Run' at the bottom left side."),
                            h3("Plot Ortholog Frequency (Number of Occurrence):"),
@@ -121,34 +112,10 @@ server <- function(input, output) {
   })
 
 
-  # Text output for ID of DNASeqs
-  output$textOutID <- renderPrint({
+  # Text output for quantification of Ortholog appearance in DNASeqs
+  output$quantify <- renderPrint({
     if (! is.null(startquantification))
-      startquantification()$id
-  })
-
-  # Text output for Header of DNASeqs
-  output$textOutHeader <- renderPrint({
-    if (! is.null(startquantification))
-      startquantification()$head
-  })
-
-  # Text output for Number of occurrences of motif
-  output$textOutnumMotif <- renderPrint({
-    if (! is.null(startquantification))
-      startquantification()$numMotif
-  })
-
-  # Text output for length of each DNAseq
-  output$textOutLen <- renderPrint({
-    if (! is.null(startquantification))
-      startquantification()$lenSeq
-  })
-
-  # Text output for frequency Ratio of ortholog for each DNAseq
-  output$textOutRatio <- renderPrint({
-    if (! is.null(startquantification))
-      startquantification()$ratioMotif
+      startquantification()
   })
 
   # Annotation of orthologs

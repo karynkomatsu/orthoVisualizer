@@ -8,7 +8,6 @@
 #'
 #' @examples
 #' \dontrun{
-#'
 #' orthoVisualizer::runorthoVisualizer()
 #' }
 #'
@@ -16,9 +15,8 @@
 #' Grolemund, G. (2015). Learn Shiny - Video Tutorials.
 #' \href{https://shiny.rstudio.com/tutorial/}{Link}
 #'
-#' @export
 #' @importFrom shiny runApp
-
+#' @export
 runorthoVisualizer <- function() {
   appDir <- system.file("shiny-scripts",
                         package = "orthoVisualizer")

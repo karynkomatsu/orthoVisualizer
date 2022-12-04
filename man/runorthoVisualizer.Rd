@@ -16,7 +16,6 @@ app works. The code has been placed in \code{./inst/shiny-scripts}.
 }
 \examples{
 \dontrun{
-
 orthoVisualizer::runorthoVisualizer()
 }
 
