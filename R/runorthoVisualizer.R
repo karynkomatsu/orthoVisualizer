@@ -16,7 +16,6 @@
 #' \href{https://shiny.rstudio.com/tutorial/}{Link}
 #'
 #' @importFrom shiny runApp
-#' @import shinyalert
 #' @export
 runorthoVisualizer <- function() {
   appDir <- system.file("shiny-scripts",

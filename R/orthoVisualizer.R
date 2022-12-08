@@ -33,6 +33,12 @@
 #' @export
 annotateSeq <- function(fastaPath, pattern) {
 
+  # Validate ortholog subsequence to look for
+  if (length(grep("[^ATCG]", pattern)) > 0) {
+    stop("ERROR: pattern formatted incorrectly: subsequence contains newline or
+         non-ATCG characters.")
+  }
+
   # Read, validate, and load in the FASTA data from path
   fastaDF <- loadFASTA(fastaPath)  # Dataframe for FASTA sequences
 
@@ -103,8 +109,11 @@ annotateSeq <- function(fastaPath, pattern) {
 #' @importFrom tibble tibble
 quantSeq <- function(fastaPath, pattern) {
 
-  # Input: Path to FASTA file,
-  #        Pattern of the target orthologous motif / gene subsequence
+  # Validate ortholog subsequence to look for
+  if (length(grep("[^ATCG]", pattern)) > 0) {
+    stop("ERROR: pattern formatted incorrectly: subsequence contains newline or
+         non-ATCG characters.")
+  }
 
   # Read, validate, and load in the FASTA data from path
   fastaDF <- loadFASTA(fastaPath)  # Dataframe for FASTA sequences
@@ -201,6 +210,12 @@ quantSeq <- function(fastaPath, pattern) {
 #' @import ggplot2
 freqSeq <- function(fastaPath, pattern) {
 
+  # Validate ortholog subsequence to look for
+  if (length(grep("[^ATCG]", pattern)) > 0) {
+    stop("ERROR: pattern formatted incorrectly: subsequence contains newline or
+         non-ATCG characters.")
+  }
+
   # Get quantity info
   motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
 
@@ -273,6 +288,12 @@ freqSeq <- function(fastaPath, pattern) {
 #' @import dplyr
 #' @import ggplot2
 freqRatioSeq <- function(fastaPath, pattern) {
+
+  # Validate ortholog subsequence to look for
+  if (length(grep("[^ATCG]", pattern)) > 0) {
+    stop("ERROR: pattern formatted incorrectly: subsequence contains newline or
+         non-ATCG characters.")
+  }
 
   # Get tibble containing quantified search results
   motifDF <- quantSeq(fastaPath = fastaPath, pattern = pattern)
